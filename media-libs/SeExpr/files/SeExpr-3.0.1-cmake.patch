@@ -1,0 +1,119 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index acaec29..77cb2a0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,6 +28,8 @@ enable_testing()
+ ## Silence installation messages
+ set(CMAKE_INSTALL_MESSAGE LAZY)
+ 
++cmake_policy(SET CMP0072 NEW)
++
+ # macros
+ include(GNUInstallDirs)
+ include(CMakePackageConfigHelpers)
+@@ -42,11 +44,11 @@ endif()
+ ## Choose build options
+ # Disney specific method of choosing variant
+ if (${FLAVOR} STREQUAL "optimize")
+-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "type of build" FORCE)
++#_cmake_modify_IGNORE     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "type of build" FORCE)
+ endif()
+ 
+ if (${FLAVOR} STREQUAL "debug")
+-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "type of build" FORCE)
++#_cmake_modify_IGNORE     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "type of build" FORCE)
+ endif()
+ 
+ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+@@ -68,7 +70,8 @@ set(INCLUDE_DIR "include/${PROJECT_NAME}")
+ 
+ # Configuration options
+ # TODO: find GTEST and boost and python the proper ways
+-set(BOOST_DIR /usr CACHE PATH "where boost is located")
++set(BOOST_DIR ${CMAKE_INSTALL_PREFIX} CACHE PATH "where boost is located")
++find_package(Boost)
+ 
+ find_package(PythonInterp) # provides Python version check
+ find_package(PythonLibs)
+@@ -76,12 +79,16 @@ find_package(PythonLibs)
+ if(PYTHON_VERSION_MAJOR LESS 3)
+     set(BOOST_PYTHON_LIBNAME boost_python CACHE STRING "what library name for boost python")
+ else()
++    message(STATUS "USING PYTHON3")
+     # try to find boost_python3 in a way compatible with most distributions
+     find_library(BOOST_PYTHON3_LIB NAMES "boost_python3" "boost_python3${PYTHON_VERSION_MINOR}")
+     SET (BOOST_PYTHON_LIBNAME ${BOOST_PYTHON3_LIB} CACHE STRING "what library name for boost python")
++    message(STATUS "BOOST_PYTHON_LIBNAME = ${BOOST_PYTHON_LIBNAME}")
+ endif()
+ 
+-set(GTEST_DIR "" CACHE STRING "Where to find GTEST")
++set(GTEST_DIR ${CMAKE_INSTALL_PREFIX} CACHE STRING "Where to find GTEST")
++find_package(GTest)
++
+ option(ENABLE_LLVM_BACKEND "Whether to build with LLVM backend" TRUE)
+ option(ENABLE_QT5 "Whether to use Qt5" TRUE)
+ option(ENABLE_SSE4 "Whether to use SSE4" TRUE)
+@@ -92,6 +99,7 @@ option(BUILD_DOC "Whether to build the documentation" TRUE)
+ option(BUILD_TESTS "Whether to build the tests" TRUE)
+ option(ENABLE_SLOW_TESTS "Whether to enable slow tests" FALSE)
+ 
++
+ set(LLVM_LIB "")
+ if (ENABLE_LLVM_BACKEND)
+     set(LLVM_DIR /usr/share/llvm/cmake CACHE PATH "Where to search for LLVM i.e. ")
+@@ -174,7 +182,7 @@ else()
+     add_definitions(-Wall -Wextra -Wno-unused-parameter)
+     add_definitions(-pthread)
+ 
+-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -g -std=c++11")
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -g -std=c++14")
+     if (ENABLE_SSE4)
+         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+     endif()
+@@ -282,3 +290,14 @@ configure_package_config_file(
+ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/seexpr2-config.cmake"
+     "${CMAKE_CURRENT_BINARY_DIR}/seexpr2-version.cmake"
+     COMPONENT devel DESTINATION ${CMAKE_DIR})
++
++MESSAGE(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff --git a/src/SeExpr2/Noise.cpp b/src/SeExpr2/Noise.cpp
+index 17c7c5d..8157cc9 100644
+--- a/src/SeExpr2/Noise.cpp
++++ b/src/SeExpr2/Noise.cpp
+@@ -30,12 +30,12 @@ namespace SeExpr2 {
+ #ifdef __SSE4_1__
+ inline double floorSSE(double val)
+ {
+-    return _mm_cvtsd_f64(_mm_floor_sd(_mm_set_sd(0.0), _mm_set_sd(val)));
++    return _mm_floor_sd(_mm_set_sd(0.0), _mm_set_sd(val))[0];
+ }
+ 
+ inline double roundSSE(double val)
+ {
+-    return _mm_cvtsd_f64(_mm_round_sd(_mm_set_sd(0.0), _mm_set_sd(val), _MM_FROUND_TO_NEAREST_INT));
++    return _mm_round_sd(_mm_set_sd(0.0), _mm_set_sd(val), _MM_FROUND_TO_NEAREST_INT)[0];
+ }
+ #else
+ #define floorSSE floor
+diff --git a/src/SeExpr2/UI/CMakeLists.txt b/src/SeExpr2/UI/CMakeLists.txt
+index 678aafc..0cb3372 100644
+--- a/src/SeExpr2/UI/CMakeLists.txt
++++ b/src/SeExpr2/UI/CMakeLists.txt
+@@ -166,7 +166,7 @@ if (Qt5_FOUND OR QT4_FOUND)
+ 
+         set(CMAKE_INSTALL_PYTHON "${PYTHON_SITE}/SeExpr2" )
+ 
+-        set(CMAKE_CXX_FLAGS "-std=c++11")
++        set(CMAKE_CXX_FLAGS "-std=c++14")
+         include_directories(${SIP_INCLUDE_DIR}
+                             ${PYQT_SIP_DIR}
+                             ${PYTHON_INCLUDE_DIR})

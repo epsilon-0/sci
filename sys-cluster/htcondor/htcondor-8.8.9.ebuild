@@ -1,36 +1,32 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=7
 
-CMAKE_MIN_VERSION=2.8
+PYTHON_COMPAT=( python3_{7..9} )
 
-PYTHON_COMPAT=( python3_{6..9} )
-
-inherit cmake-utils python-single-r1 user
+inherit cmake python-r1
+CMAKE_BUILD_TYPE=Release
 
 DESCRIPTION="Workload management system for compute-intensive jobs"
-HOMEPAGE="http://www.cs.wisc.edu/htcondor/"
+HOMEPAGE="http://htcondorproject.org/"
 SRC_URI="https://github.com/${PN}/${PN}/archive/V${PV//./_}.tar.gz -> ${P}.tar.gz"
-#SRC_URI="condor_src-${PV}-all-all.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="boinc cgroup contrib curl doc kerberos libvirt minimal postgres python soap ssl test X xml"
+IUSE="boinc cgroup contrib curl dmtcp doc kerberos libvirt minimal postgres python soap ssl test X xml"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-CDEPEND="
-	sys-libs/zlib
+CDEPEND="sys-libs/zlib
 	>=dev-libs/libpcre-7.6
-	$(python_gen_cond_dep '
-		dev-libs/boost[${PYTHON_USEDEP}]
-	')
+	>=dev-libs/boost-1.49.0[${PYTHON_USEDEP}]
 	net-nds/openldap
 	boinc? ( sci-misc/boinc )
 	cgroup? ( >=dev-libs/libcgroup-0.37 )
 	curl? ( >=net-misc/curl-7.19.7[ssl?] )
+	dmtcp? ( sys-apps/dmtcp )
 	libvirt? ( >=app-emulation/libvirt-0.6.2 )
 	kerberos? ( virtual/krb5 )
 	X? ( x11-libs/libX11 )
@@ -44,21 +40,15 @@ DEPEND="${CDEPEND}
 	test? ( dev-util/valgrind )"
 
 RDEPEND="${CDEPEND}
-	mail-client/mailx"
+	virtual/mailx"
 
-S="${WORKDIR}/condor-${PV}"
 PATCHES=(
-	"${FILESDIR}"/condor_shadow_dlopen-${PV}.patch
-	"${FILESDIR}"/condor_config.generic.patch
-	"${FILESDIR}"/0001-Apply-the-user-s-condor_config-last-rather-than-firs.patch
-	"${FILESDIR}"/packaging_directories-${PV}.patch
-	"${FILESDIR}"/fix_sandbox_violations-${PV}.patch
+	"${FILESDIR}"/${P}-shadow_dlopen.patch
+	"${FILESDIR}"/${P}-condor_config.generic.patch
+	"${FILESDIR}"/${P}-Apply-the-users-condor_config-last-rather-than-first.patch
+	"${FILESDIR}"/${P}-packaging_directories.patch
+	"${FILESDIR}"/fix_sandbox_violations-8.0.0.patch
 )
-
-pkg_setup() {
-	enewgroup condor
-	enewuser condor -1 "${ROOT}"bin/bash "${ROOT}var/lib/condor" condor
-}
 
 src_configure() {
 	# All the hard coded -DWITH_X=OFF flags are for packages that aren't in portage

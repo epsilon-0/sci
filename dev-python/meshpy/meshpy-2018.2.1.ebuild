@@ -6,7 +6,7 @@ EAPI=7
 DISTUTILS_IN_SOURCE_BUILD=1
 PYTHON_COMPAT=( python3_{6..8} )
 
-inherit distutils-r1
+inherit virtualx distutils-r1
 
 DESCRIPTION="Quality triangular and tetrahedral mesh generation for Python"
 HOMEPAGE="https://mathema.tician.de/software/meshpy
@@ -18,7 +18,6 @@ SRC_URI="https://github.com/inducer/meshpy/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
 
 RDEPEND="
 	dev-libs/boost[python,${PYTHON_USEDEP}]
@@ -43,5 +42,5 @@ python_prepare_all() {
 
 python_test() {
 	distutils_install_for_testing
-	pytest -vv || die "tests failed with ${EPYTHON}"
+	virtx pytest -vv || die "tests failed with ${EPYTHON}"
 }

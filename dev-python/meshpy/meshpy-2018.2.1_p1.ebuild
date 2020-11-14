@@ -6,7 +6,7 @@ EAPI=7
 DISTUTILS_IN_SOURCE_BUILD=1
 PYTHON_COMPAT=( python3_{6..8} )
 
-inherit distutils-r1
+inherit virtualx distutils-r1
 
 MY_PN="MeshPy"
 
@@ -47,5 +47,5 @@ python_prepare_all() {
 
 python_test() {
 	distutils_install_for_testing
-	pytest -vv || die "tests failed with ${EPYTHON}"
+	virtx pytest -vv || die "tests failed with ${EPYTHON}"
 }

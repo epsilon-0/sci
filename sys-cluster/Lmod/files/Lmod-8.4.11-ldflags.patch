@@ -24,3 +24,16 @@ index dbce85e..be42a85 100644
  
  install: all
  	cp -a *.so* $(LIB)
+diff --git a/Makefile b/Makefile
+index 64be28c..5a8478b 100644
+--- a/pkgs/term/Makefile
++++ b/pkgs/term/Makefile
+@@ -26,7 +26,7 @@ $(SONAME):
+ 	ln -s $(SONAMEV) $@
+ 
+ $(LIBRARY): $(OBJ)
+-	$(CC) $(CFLAGS) $(LIB_OPTION) -o $(LIBRARY) $(OBJ) -lc
++	$(CC) $(CFLAGS) $(LIB_OPTION) -o $(LIBRARY) $(OBJ) $(LDFLAGS) -lc
+ 
+ install: $(SHARE)/term $(LIB)/term all
+ 	cp -a *.so* $(LIB)/term

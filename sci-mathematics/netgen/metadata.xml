@@ -6,9 +6,12 @@
 		<name>Gentoo Mathematics Project</name>
 	</maintainer>
 	<use>
-		<flag name="opencascade"> Enable OpenCASCADE support</flag>
+		<flag name="ccache">Use ccache for speeding up future builds</flag>
+		<flag name="cgns">Enable CGNS file read/write support</flag>
+		<flag name="opencascade">Enable OpenCASCADE support</flag>
+		<flag name="spdlog">use <pkg>dev-libs/spdlog</pkg> for logging</flag>
 	</use>
 	<upstream>
-		<remote-id type="sourceforge">netgen-mesher</remote-id>
+		<remote-id type="github">NGSolve/netgen</remote-id>
 	</upstream>
 </pkgmetadata>

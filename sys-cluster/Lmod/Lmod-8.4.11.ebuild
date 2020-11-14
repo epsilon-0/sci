@@ -70,7 +70,7 @@ src_configure() {
 		--with-siteName="${SITE_NAME}"
 		--with-syshost="${SYSHOST}"
 		--with-shortTime="${SHORT_TIME}"
-		--without-useBuiltinPkgs
+		--with-useBuiltinPkgs
 		$(use_with duplicate duplicatePaths)
 		$(use_with nocase caseIndependentSorting)
 		$(use_with italic hiddenItalic)
@@ -85,18 +85,13 @@ src_configure() {
 	econf ${myconf[@]} ${EXTRA_ECONF[@]}
 }
 
-src_compile() {
-	CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}" \
-	default
-}
-
 src_test() {
 	local -x PATH="/opt/hermes/bin:${PATH}"
 	tm -vvv || die
 }
 
 src_install() {
-	CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}"
+	CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}" \
 	default
 
 	keepdir /var/lmod

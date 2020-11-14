@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>gentoo@aisha.cc</email>
+		<description>Aisha Tammy</description>
+	</maintainer>
+	<maintainer type="project">
+		<email>sci@gentoo.org</email>
+		<name>Gentoo Science Project</name>
+	</maintainer>
+	<longdescription lang="en">
+		appleseed is an open source, physically-based global illumination
+		rendering engine primarily designed for animation and visual effects.
+	</longdescription>
+	<use>
+		<flag name="benchmarks">Run benchmarks during test phase (need test option enabled)</flag>
+		<flag name="opencl">Use OpenCL acceleration</flag>
+		<flag name="openvdb">Use OpenVDB for optimized data structures</flag>
+		<flag name="osg">Use OpenSceneGraph for optimized rendering</flag>
+		<flag name="qt">Build QT components</flag>
+		<flag name="runtime-debug">Enable runtime debug, with a 15-20% hit to performance</flag>
+	</use>
+	<upstream>
+		<remote-id type="sourceforge">brlcad</remote-id>
+	</upstream>
+</pkgmetadata>
