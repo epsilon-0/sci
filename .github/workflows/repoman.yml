@@ -22,6 +22,10 @@ jobs:
         wget -qO - "https://github.com/gentoo/portage/archive/portage-3.0.12.tar.gz" | tar xz
         sudo groupadd -g 250 portage
         sudo useradd -g portage -d /var/tmp/portage -s /bin/false -u 250 portage
+        mkdir -p metadata/repoman
+        wget -O metadata/repoman/qa_data.yml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/qa_data.yaml
+        wget -O metadata/repoman/repository.yml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/repository.yaml
+        sed -i "s/file.empty/file.empty\n    - file.size/" metadata/repoman/qa_data.yaml
     - name: Setup master gentoo repository
       run: |
         sudo mkdir -p /var/db/repos/gentoo /etc/portage /var/cache/distfiles
@@ -32,3 +36,5 @@ jobs:
     - name: Test with repoman
       run: |
         python3 portage-portage-3.0.12/repoman/bin/repoman full -dx
+      env:
+        REPOMAN_DEFAULT_OPTS="--experimental-repository-modules=y"
