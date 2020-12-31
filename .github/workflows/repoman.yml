@@ -25,7 +25,7 @@ jobs:
         mkdir -p metadata/repoman
         wget -O metadata/repoman/qa_data.yml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/qa_data.yaml
         wget -O metadata/repoman/repository.yml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/repository.yaml
-        sed -i "s/file.empty/file.empty\n    - file.size/" metadata/repoman/qa_data.yaml
+        sed -e "s/file.empty/file.empty\n    - file.size/" -i metadata/repoman/qa_data.yaml
     - name: Setup master gentoo repository
       run: |
         sudo mkdir -p /var/db/repos/gentoo /etc/portage /var/cache/distfiles
