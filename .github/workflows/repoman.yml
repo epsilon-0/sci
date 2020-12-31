@@ -23,8 +23,8 @@ jobs:
         sudo groupadd -g 250 portage
         sudo useradd -g portage -d /var/tmp/portage -s /bin/false -u 250 portage
         mkdir -p metadata/repoman
-        wget -O metadata/repoman/qa_data.yml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/qa_data.yaml
-        wget -O metadata/repoman/repository.yml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/repository.yaml
+        wget -O metadata/repoman/qa_data.yaml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/qa_data.yaml
+        wget -O metadata/repoman/repository.yaml https://gitweb.gentoo.org/proj/portage.git/plain/repoman/cnf/repository/repository.yaml
         sed -e "s/file.empty/file.empty\n    - file.size/" -i metadata/repoman/qa_data.yaml
     - name: Setup master gentoo repository
       run: |
